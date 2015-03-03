@@ -393,6 +393,15 @@
         this.url = this.api.basePath + this.path.replace('{format}', 'json');
       }
       this.api.progress('fetching resource ' + this.name + ': ' + this.url);
+
+        // start patch
+        if(this.url.indexOf("/")==0) {
+            var origin = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+            this.url = origin + this.url;
+            //console.log("this.url remapped", this.url)
+        }
+        // end patch
+
       var obj = {
         url: this.url,
         method: 'GET',
@@ -447,8 +456,20 @@
       this.produces = response.produces;
     if (response.consumes != null)
       this.consumes = response.consumes;
-    if ((response.basePath != null) && response.basePath.replace(/\s/g, '').length > 0)
-      this.basePath = response.basePath.indexOf('http') === -1 ? this.getAbsoluteBasePath(response.basePath) : response.basePath;
+    if ((response.basePath != null) && response.basePath.replace(/\s/g, '').length > 0){
+        // start patch change following line
+        //this.basePath = response.basePath.indexOf('http') === -1 ? this.getAbsoluteBasePath(response.basePath) : response.basePath;
+        this.basePath = response.basePath;
+        // end patch
+    }
+
+      // start patch
+      if(this.basePath.indexOf("/")==0) {
+          var origin = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+          this.basePath = origin + this.basePath;
+          //console.log("this.basePath remapped", this.basePath)
+      }
+      // end patch
 
     this.addModels(response.models);
     if (response.apis) {
